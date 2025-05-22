@@ -74,7 +74,14 @@ export const projects = [
     description: "Developed a full-stack stock analysis platform using Flask and JavaScript. Integrated real-time data from Yahoo Finance and Alpha Vantage APIs. Implemented auto-refresh updates and stored user preferences with SQLAlchemy + SQLite.",
     tech: "Flask, Python, JavaScript, SQLAlchemy, SQLite, APIs",
     category: "Python",
-    link: "#" // Add GitHub repo or deployment link if available
+    link: "#"
+  },
+  {
+    title: "Restaurant Management System",
+    description: "A full-stack restaurant management system built using React and Flask. Includes role-based access with JWT, payment integration via Stripe, and features like 'Call Waiter', dynamic allergen tagging, and a modular menu system.",
+    tech: "React, Flask, SQLite, JWT, Stripe",
+    category: "Javascript",
+    link: "https://github.com/Wshmaalii/Restaurant_Management"
   }
 ];
 
