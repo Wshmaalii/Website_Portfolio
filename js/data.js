@@ -101,13 +101,13 @@ export const qualifications = [
     institution: "Google",
     description: "Proficiency in SQL, data validation, and large dataset analysis. Built workflows for data cleaning, preparation, and visualization."
   },
-  {
-    type: 'work',
-    date: "Sep 2022 – Mar 2023",
-    title: "Math Tutor",
-    institution: "Private Tutoring",
-    description: "Delivered 1:1 and group sessions in algebra, calculus, and statistics. Created custom study plans and improved student exam performance."
-  },
+{
+  type: 'work',
+  date: "Sep 2023 – Current",
+  title: "Full-Stack App Developer",
+  institution: "Self-Employed",
+  description: "Built and deployed full-stack applications including a stock analysis dashboard and a restaurant management platform. Used React, Flask, JWT, Stripe, and SQLAlchemy to deliver secure, scalable user experiences and APIs."
+},
   {
     type: 'work',
     date: "Sep 2022 – Mar 2023",
