@@ -150,6 +150,11 @@
     .term-out-muted  { color: var(--muted); }
     .term-out-purple { color: var(--purple); }
     .term-out-pink   { color: var(--pink); }
+    /* inline colour helpers used in LINES html */
+    .t-teal   { color: var(--teal); }
+    .t-pink   { color: var(--pink); }
+    .t-purple { color: var(--purple); }
+    .t-dim    { color: #374151; }
 
     .term-tag {
       display: inline-block;
@@ -1544,12 +1549,40 @@ window.addEventListener('scroll', () => {
 /* ══════════════════════════════════════════════════════
    2. TERMINAL INTRO
 ══════════════════════════════════════════════════════ */
-(async () => {
-  const intro   = document.getElementById('terminal-intro');
+const TYPING_SPEED = 32;
+const LINE_PAUSE   = 150;
+
+const LINES = [
+  { type: 'cmd', prompt: 'washma@macbook:~$',          text: 'cd life/2026' },
+
+  { type: 'cmd', prompt: 'washma@macbook:~/life/2026$', text: 'ls' },
+  { type: 'out', text: '<span class="t-teal">finals/</span>   <span class="t-pink">TradeLink/</span>   <span class="t-purple">robotic-arm/</span>   job-hunt/   ☕' },
+
+  { type: 'cmd', prompt: 'washma@macbook:~/life/2026$', text: 'git log --oneline' },
+  { type: 'out', text: '<span class="t-dim">a3f92b1</span> stayed up until 3am debugging websockets (again)' },
+  { type: 'out', text: '<span class="t-dim">ff12c44</span> taught a robot to read my hand gestures' },
+  { type: 'out', text: '<span class="t-dim">9c2e801</span> <span class="t-pink">built a trading platform because why not</span>' },
+  { type: 'out', text: '<span class="t-dim">b7d3a10</span> fixed 1 bug, introduced 3 more (classic)' },
+  { type: 'out', text: '<span class="t-dim">c1e8f22</span> graduated from crying at stack overflow to crying at docs' },
+
+  { type: 'cmd', prompt: 'washma@macbook:~/life/2026$', text: 'cat status.json' },
+  { type: 'out', text: '{' },
+  { type: 'out', text: '  <span class="t-teal">"name"</span>:       <span class="t-pink">"Washma Ali"</span>,' },
+  { type: 'out', text: '  <span class="t-teal">"role"</span>:       <span class="t-pink">"Security-focused engineer + robotics researcher"</span>,' },
+  { type: 'out', text: '  <span class="t-teal">"location"</span>:   <span class="t-pink">"London, UK"</span>,' },
+  { type: 'out', text: '  <span class="t-teal">"available"</span>:  <span class="t-pink">true</span>,  <span class="t-dim">// please hire me</span>' },
+  { type: 'out', text: '  <span class="t-teal">"coffee"</span>:     <span class="t-pink">"critical dependency"</span>' },
+  { type: 'out', text: '}' },
+
+  { type: 'cmd', prompt: 'washma@macbook:~/life/2026$', text: 'open portfolio.html' },
+  { type: 'out', text: '<span class="t-teal">✓ launching...</span>  <span class="t-dim">(finally something that compiled first try)</span>' },
+];
+
+let _termSkip = false;
+
+(async function typeTerminal() {
   const body_el = document.getElementById('term-body');
   document.body.style.overflow = 'hidden';
-
-  const PROMPT = '<span class="term-prompt">washma@rhul:~$</span> ';
 
   function addLine(html = '') {
     const div = document.createElement('div');
@@ -1559,69 +1592,32 @@ window.addEventListener('scroll', () => {
     return div;
   }
 
-  async function typeLine(text, minD = 38, maxD = 95) {
-    const div  = addLine(PROMPT + '<span class="term-cmd" id="_tc"></span><span class="term-cursor"></span>');
-    const span = div.querySelector('#_tc');
-    const cur  = div.querySelector('.term-cursor');
-    for (const ch of text) {
-      span.textContent += ch;
-      await sleep(minD + Math.random() * (maxD - minD));
+  for (const line of LINES) {
+    if (_termSkip) break;
+    if (line.type === 'cmd') {
+      const div = addLine(
+        `<span class="term-prompt">${line.prompt}</span> ` +
+        `<span class="term-cmd" id="_tc"></span><span class="term-cursor"></span>`
+      );
+      const span = div.querySelector('#_tc');
+      const cur  = div.querySelector('.term-cursor');
+      for (const ch of line.text) {
+        if (_termSkip) break;
+        span.textContent += ch;
+        await sleep(TYPING_SPEED + Math.random() * TYPING_SPEED);
+      }
+      cur.remove();
+      if (!_termSkip) await sleep(LINE_PAUSE);
+    } else if (line.type === 'out') {
+      addLine(`<span>${line.text}</span>`);
+      if (!_termSkip) await sleep(Math.round(LINE_PAUSE / 3));
     }
-    cur.remove();
-    return div;
   }
 
-  async function outLine(html, extraClass = '') {
-    await sleep(60);
-    addLine(`<span class="${extraClass}">${html}</span>`);
+  if (!_termSkip) {
+    await sleep(700);
+    dismissTerminal();
   }
-
-  // Sequence
-  await sleep(400);
-
-  await typeLine('whoami');
-  await outLine('washma.ali &nbsp;—&nbsp; InfoSec · Full-Stack · Royal Holloway', 'term-out-teal');
-  addLine();
-  await sleep(380);
-
-  await typeLine('cat skills.txt');
-  const tagsLine = document.createElement('div');
-  tagsLine.className = 'term-line';
-  tagsLine.style.flexWrap = 'wrap';
-  const tagDefs = [
-    ['Python','teal'],['Flask','purple'],['React','purple'],
-    ['JWT','pink'],['Docker','amber'],['MediaPipe','purple'],['AWS','amber']
-  ];
-  tagDefs.forEach(([t,c]) => {
-    const s = document.createElement('span');
-    s.className = `term-tag term-tag-${c}`;
-    s.textContent = t;
-    tagsLine.appendChild(s);
-  });
-  body_el.appendChild(tagsLine);
-  addLine();
-  await sleep(380);
-
-  await typeLine('ls projects/');
-  await outLine('TradeLink/ &nbsp;&nbsp; stock-analysis/ &nbsp;&nbsp; gesture-arm/', 'term-out-amber');
-  addLine();
-  await sleep(380);
-
-  await typeLine('cat status.json');
-  await outLine('{', 'term-out-muted');
-  await outLine('&nbsp;&nbsp;<span class="term-out-purple">"available"</span>: <span class="term-out-teal">true</span>,', '');
-  await outLine('&nbsp;&nbsp;<span class="term-out-purple">"role"</span>: <span class="term-out-pink">"Research Assistant"</span>,', '');
-  await outLine('&nbsp;&nbsp;<span class="term-out-purple">"graduating"</span>: <span class="term-out-amber">2026</span>,', '');
-  await outLine('&nbsp;&nbsp;<span class="term-out-purple">"seeking"</span>: <span class="term-out-pink">"placement | grad | research"</span>', '');
-  await outLine('}', 'term-out-muted');
-  addLine();
-  await sleep(380);
-
-  await typeLine('open portfolio.html', 55, 80);
-  await outLine('→ Launching...', 'term-out-green');
-  await sleep(900);
-
-  dismissTerminal();
 })();
 
 function dismissTerminal() {
@@ -1631,7 +1627,7 @@ function dismissTerminal() {
   setTimeout(() => intro.remove(), 650);
 }
 
-function skipTerminal() { dismissTerminal(); }
+function skipTerminal() { _termSkip = true; dismissTerminal(); }
 
 /* ══════════════════════════════════════════════════════
    3. CURSOR TRAIL  (skipped on touch devices)
