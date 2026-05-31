@@ -22,7 +22,11 @@
       --amber:    #f0a44a;
       --text:     #e8eaf0;
       --muted:    #6b7280;
-      --border:   rgba(255,255,255,0.07);
+      --border:     rgba(255,255,255,0.07);
+      /* aliases used by new feature CSS */
+      --accent:      #4af0c4;
+      --accent-pink: #f06292;
+      --accent2:     #7b6cff;
     }
 
     html { scroll-behavior: smooth; }
@@ -258,7 +262,7 @@
     /* ─────────────────────────────────
        SHARED SECTION ANATOMY
     ───────────────────────────────── */
-    section { padding: 96px max(1.5rem, 8vw); }
+    section { padding: 96px max(1.5rem, 8vw); position: relative; z-index: 1; }
 
     .section-label {
       display: inline-flex;
@@ -337,6 +341,7 @@
       height: 1px;
       background: linear-gradient(90deg, transparent, var(--border) 50%, transparent);
       margin: 0 max(1.5rem, 8vw);
+      position: relative; z-index: 1;
     }
 
     /* ─────────────────────────────────
@@ -851,6 +856,7 @@
       border-top: 1px solid var(--border);
       display: flex; justify-content: space-between; align-items: center;
       flex-wrap: wrap; gap: 1rem;
+      position: relative; z-index: 1;
     }
     footer p { font-size: 0.82rem; color: var(--muted); }
     .footer-right { font-size: 0.82rem; color: var(--teal); font-weight: 500; }
@@ -874,9 +880,257 @@
       .skills-grid { grid-template-columns: 1fr; }
       .edu-card { flex-direction: column; }
     }
+
+    /* ══════════════════════════════════
+       FEATURE 1 — TICKER MARQUEE
+    ══════════════════════════════════ */
+    .ticker-wrap {
+      width: 100%;
+      background: linear-gradient(90deg, rgba(74,240,196,0.05), rgba(240,98,146,0.05));
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      overflow: hidden;
+      padding: 0.6rem 0;
+      position: relative;
+      z-index: 1;
+    }
+    .ticker-wrap::before,
+    .ticker-wrap::after {
+      content: '';
+      position: absolute;
+      top: 0; bottom: 0;
+      width: 80px;
+      z-index: 2;
+      pointer-events: none;
+    }
+    .ticker-wrap::before { left: 0;  background: linear-gradient(to right, var(--bg), transparent); }
+    .ticker-wrap::after  { right: 0; background: linear-gradient(to left,  var(--bg), transparent); }
+    .ticker-track {
+      display: flex;
+      width: max-content;
+      animation: ticker-scroll 28s linear infinite;
+    }
+    .ticker-track:hover { animation-play-state: paused; }
+    @keyframes ticker-scroll {
+      from { transform: translateX(0); }
+      to   { transform: translateX(-50%); }
+    }
+    .ticker-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0 2.5rem;
+      font-size: 0.78rem;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+    .ticker-item .tick-arrow { color: var(--accent); }
+    .ticker-item .tick-pink  { color: var(--accent-pink); }
+    .ticker-item .tick-sep   { color: #1f2937; margin: 0 0.5rem; }
+
+    /* ══════════════════════════════════
+       FEATURE 2 — PARTICLE CANVAS
+    ══════════════════════════════════ */
+    #particle-canvas {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.45;
+    }
+
+    /* ══════════════════════════════════
+       FEATURE 3 — MATRIX RAIN
+    ══════════════════════════════════ */
+    #matrix-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10001;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+    #matrix-overlay.active { opacity: 1; pointer-events: all; }
+    #matrix-canvas { width: 100%; height: 100%; display: block; }
+
+    /* ══════════════════════════════════
+       FEATURE 4 — SUDO MODAL
+    ══════════════════════════════════ */
+    #sudo-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 10002;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(5,6,8,0.85);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.3s, visibility 0.3s;
+    }
+    #sudo-modal.active { opacity: 1; visibility: visible; }
+    .sudo-box {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 12px;
+      padding: 2.5rem;
+      max-width: 480px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 0 60px rgba(74,240,196,0.15);
+      font-family: 'Courier New', monospace;
+    }
+    .sudo-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+    .sudo-text {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.75;
+      margin-bottom: 1.5rem;
+    }
+    .sudo-text .s-pink { color: var(--accent-pink); }
+    .sudo-text .s-teal { color: var(--accent); }
+    .sudo-actions { display: flex; gap: 1rem; justify-content: center; }
+    .sudo-btn {
+      font-family: 'Courier New', monospace;
+      font-size: 0.82rem;
+      padding: 0.55rem 1.3rem;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .sudo-btn.primary { background: var(--accent); color: var(--bg); font-weight: 700; border: none; }
+    .sudo-btn.primary:hover { background: #38d9b0; }
+    .sudo-btn.secondary { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+    .sudo-btn.secondary:hover { border-color: var(--accent-pink); color: var(--accent-pink); }
+
+    /* ══════════════════════════════════
+       FEATURE 5 — INTERACTIVE TERMINAL
+    ══════════════════════════════════ */
+    #interactive-terminal-section {
+      padding: 6rem max(1.5rem, 8vw);
+      position: relative;
+      z-index: 1;
+    }
+    .iterm-window {
+      background: #0a0c0f;
+      border: 1px solid rgba(74,240,196,0.2);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 0 60px rgba(74,240,196,0.05);
+      max-width: 860px;
+    }
+    .iterm-titlebar {
+      background: #111418;
+      padding: 0.7rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+    }
+    .t-dot {
+      width: 12px; height: 12px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .t-dot.red    { background: #ff5f57; }
+    .t-dot.yellow { background: #ffbd2e; }
+    .t-dot.green  { background: #28c840; }
+    .iterm-title {
+      flex: 1;
+      text-align: center;
+      font-size: 0.72rem;
+      color: #374151;
+      font-family: 'Courier New', monospace;
+      letter-spacing: 0.05em;
+    }
+    .iterm-hint { font-size: 0.7rem; color: #374151; font-family: 'Courier New', monospace; }
+    .iterm-output {
+      padding: 1.2rem 1.5rem;
+      min-height: 200px;
+      max-height: 320px;
+      overflow-y: auto;
+      font-family: 'Courier New', monospace;
+      font-size: 0.83rem;
+      line-height: 1.9;
+      color: #9ca3af;
+      scrollbar-width: thin;
+      scrollbar-color: #1f2937 transparent;
+    }
+    .iterm-output .io-prompt  { color: var(--accent); }
+    .iterm-output .io-cmd     { color: var(--text, #e8eaf0); }
+    .iterm-output .io-res     { color: #6b7280; padding-left: 1rem; }
+    .iterm-output .io-teal    { color: var(--accent); }
+    .iterm-output .io-pink    { color: var(--accent-pink); }
+    .iterm-output .io-purple  { color: #a09bff; }
+    .iterm-output .io-err     { color: #f87171; }
+    .iterm-input-row {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.8rem 1.5rem;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      background: #0a0c0f;
+    }
+    .iterm-prompt-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.83rem;
+      color: var(--accent);
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+    #iterm-input {
+      flex: 1;
+      background: transparent;
+      border: none;
+      outline: none;
+      font-family: 'Courier New', monospace;
+      font-size: 0.83rem;
+      color: var(--text, #e8eaf0);
+      caret-color: var(--accent);
+    }
+    @media (max-width: 600px) {
+      #interactive-terminal-section { padding: 3rem 1.25rem; }
+      .iterm-hint { display: none; }
+      .iterm-titlebar { gap: 0.35rem; }
+    }
   </style>
 </head>
 <body>
+
+<!-- Particle network canvas -->
+<canvas id="particle-canvas" aria-hidden="true"></canvas>
+
+<!-- Matrix rain easter egg -->
+<div id="matrix-overlay" aria-hidden="true">
+  <canvas id="matrix-canvas"></canvas>
+</div>
+
+<!-- sudo hire-me modal -->
+<div id="sudo-modal" role="dialog" aria-modal="true" aria-label="sudo hire-me">
+  <div class="sudo-box">
+    <div class="sudo-title">$ sudo hire-me</div>
+    <p class="sudo-text">
+      <span class="s-teal">Permission granted.</span><br><br>
+      You've found the easter egg — which means you're exactly the kind of person I want to work with.<br><br>
+      <span class="s-pink">Washma Ali</span> is open to internships, placements, and graduate roles in security engineering, full-stack development, and research.<br><br>
+      <span class="s-teal">Redirecting to wmis045@live.rhul.ac.uk...</span>
+    </p>
+    <div class="sudo-actions">
+      <button class="sudo-btn primary" onclick="window.location='mailto:wmis045@live.rhul.ac.uk'; closeSudo()">Open Email →</button>
+      <button class="sudo-btn secondary" onclick="closeSudo()">esc</button>
+    </div>
+  </div>
+</div>
 
 <!-- Scroll progress bar -->
 <div id="scroll-progress"></div>
@@ -906,7 +1160,7 @@
      NAVIGATION
 ════════════════════════════════════ -->
 <nav>
-  <a href="#hero" class="nav-logo">WA<span>.</span></a>
+  <a href="#hero" id="nav-logo-btn" class="nav-logo">WA<span>.</span></a>
   <ul class="nav-links">
     <li><a href="#hero">About</a></li>
     <li><a href="#experience">Experience</a></li>
@@ -972,6 +1226,28 @@
     </div>
   </div>
 </section>
+
+<!-- ════════════════════════════════════
+     TICKER MARQUEE
+════════════════════════════════════ -->
+<div class="ticker-wrap" aria-hidden="true">
+  <div class="ticker-track">
+    <span class="ticker-item"><span class="tick-arrow">›</span> Currently building TradeLink v2.0 <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Research Assistant <span class="tick-pink">@ Royal Holloway</span> <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Gesture recognition + IMU sensor fusion <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Open to <span class="tick-pink">internships · placements · grad roles</span> <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Python · Flask · React · Docker · AWS <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> BSc Computer Science (Information Security) · 2026 <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> London, UK <span class="tick-pink">⟡</span> <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Currently building TradeLink v2.0 <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Research Assistant <span class="tick-pink">@ Royal Holloway</span> <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Gesture recognition + IMU sensor fusion <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Open to <span class="tick-pink">internships · placements · grad roles</span> <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> Python · Flask · React · Docker · AWS <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> BSc Computer Science (Information Security) · 2026 <span class="tick-sep">///</span></span>
+    <span class="ticker-item"><span class="tick-arrow">›</span> London, UK <span class="tick-pink">⟡</span> <span class="tick-sep">///</span></span>
+  </div>
+</div>
 
 <div class="section-divider"></div>
 
@@ -1172,6 +1448,37 @@
         <span class="course-tag">Software Engineering</span>
         <span class="course-tag">Databases</span>
       </div>
+    </div>
+  </div>
+</section>
+
+<div class="section-divider"></div>
+
+<!-- ════════════════════════════════════
+     INTERACTIVE TERMINAL
+════════════════════════════════════ -->
+<section id="interactive-terminal-section" class="fade-up">
+  <div class="section-label">Terminal</div>
+  <h2 class="section-title">Talk to <span class="highlight">My Portfolio</span></h2>
+  <p style="color:var(--muted);font-size:0.9rem;margin-bottom:2rem;max-width:520px;">
+    Type a command and press Enter. Try
+    <code style="color:var(--accent);background:rgba(74,240,196,0.08);padding:0.1rem 0.4rem;border-radius:3px;">help</code>
+    to get started.
+  </p>
+  <div class="iterm-window">
+    <div class="iterm-titlebar">
+      <div class="t-dot red"></div>
+      <div class="t-dot yellow"></div>
+      <div class="t-dot green"></div>
+      <span class="iterm-title">visitor@washma-portfolio ~ interactive</span>
+      <span class="iterm-hint">try: help · about · skills · projects · contact · sudo hire-me</span>
+    </div>
+    <div class="iterm-output" id="itermOutput">
+      <div><span class="io-teal">Welcome.</span> Type <span class="io-pink">help</span> for available commands.</div>
+    </div>
+    <div class="iterm-input-row">
+      <span class="iterm-prompt-label">visitor@washma:~$</span>
+      <input id="iterm-input" type="text" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="type a command..." />
     </div>
   </div>
 </section>
@@ -1486,6 +1793,281 @@ function filterProjects(tag, btn) {
     card.classList.toggle('hidden', !match);
   });
 }
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 2 — PARTICLE NETWORK  (desktop only)
+══════════════════════════════════════════════════════ */
+if (!window.matchMedia('(pointer: coarse)').matches) {
+  (function initParticles() {
+    const canvas = document.getElementById('particle-canvas');
+    const ctx    = canvas.getContext('2d');
+    let W, H, particles = [];
+    const mouse = { x: -9999, y: -9999 };
+    const N = 70, CONNECT_DIST = 140, MOUSE_DIST = 180;
+
+    function resize() {
+      W = canvas.width  = window.innerWidth;
+      H = canvas.height = window.innerHeight;
+    }
+
+    function Particle() {
+      this.x  = Math.random() * W;
+      this.y  = Math.random() * H;
+      this.vx = (Math.random() - 0.5) * 0.35;
+      this.vy = (Math.random() - 0.5) * 0.35;
+      this.r  = Math.random() * 1.5 + 0.5;
+      const palette = ['#4af0c4','#f06292','#7b6cff'];
+      this.color = palette[Math.floor(Math.random() * palette.length)];
+    }
+    Particle.prototype.update = function() {
+      this.x += this.vx; this.y += this.vy;
+      if (this.x < 0 || this.x > W) this.vx *= -1;
+      if (this.y < 0 || this.y > H) this.vy *= -1;
+    };
+
+    function init() {
+      resize();
+      particles = Array.from({ length: N }, () => new Particle());
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, W, H);
+      particles.forEach(p => {
+        p.update();
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = p.color;
+        ctx.globalAlpha = 0.7;
+        ctx.fill();
+      });
+      for (let i = 0; i < particles.length; i++) {
+        for (let j = i + 1; j < particles.length; j++) {
+          const dx = particles[i].x - particles[j].x;
+          const dy = particles[i].y - particles[j].y;
+          const d  = Math.sqrt(dx*dx + dy*dy);
+          if (d < CONNECT_DIST) {
+            ctx.globalAlpha = (1 - d / CONNECT_DIST) * 0.18;
+            ctx.strokeStyle = particles[i].color;
+            ctx.lineWidth   = 0.6;
+            ctx.beginPath();
+            ctx.moveTo(particles[i].x, particles[i].y);
+            ctx.lineTo(particles[j].x, particles[j].y);
+            ctx.stroke();
+          }
+        }
+        const dx = particles[i].x - mouse.x;
+        const dy = particles[i].y - mouse.y;
+        const d  = Math.sqrt(dx*dx + dy*dy);
+        if (d < MOUSE_DIST) {
+          ctx.globalAlpha = (1 - d / MOUSE_DIST) * 0.45;
+          ctx.strokeStyle = '#4af0c4';
+          ctx.lineWidth   = 0.8;
+          ctx.beginPath();
+          ctx.moveTo(particles[i].x, particles[i].y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.stroke();
+        }
+      }
+      ctx.globalAlpha = 1;
+      requestAnimationFrame(draw);
+    }
+
+    window.addEventListener('resize', init);
+    window.addEventListener('mousemove', e => { mouse.x = e.clientX; mouse.y = e.clientY; }, { passive: true });
+    init();
+    draw();
+  })();
+}
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 3 — MATRIX RAIN EASTER EGG
+══════════════════════════════════════════════════════ */
+(function initMatrix() {
+  const overlay = document.getElementById('matrix-overlay');
+  const canvas  = document.getElementById('matrix-canvas');
+  const ctx     = canvas.getContext('2d');
+  let active = false, animId, drops = [];
+  const MATRIX_CHARS = 'アイウエオカキクケコサシスセソタチツテトナニヌネノWASHMALI01SECUREFLASKAWSDOCKERPYTHON';
+
+  document.getElementById('nav-logo-btn').addEventListener('click', function(e) {
+    e.preventDefault();
+    if (active) return;
+    active = true;
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const cols = Math.floor(canvas.width / 16);
+    drops = Array(cols).fill(1);
+    overlay.classList.add('active');
+
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(5,6,8,0.08)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      drops.forEach((y, i) => {
+        const ch = MATRIX_CHARS[Math.floor(Math.random() * MATRIX_CHARS.length)];
+        const isSpecial = 'WASHMA'.includes(ch);
+        ctx.fillStyle = isSpecial ? '#f06292' : (Math.random() > 0.95 ? '#ffffff' : '#4af0c4');
+        ctx.font = '14px Courier New';
+        ctx.fillText(ch, i * 16, y * 16);
+        if (y * 16 > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      });
+      animId = requestAnimationFrame(drawMatrix);
+    }
+    drawMatrix();
+
+    setTimeout(() => {
+      cancelAnimationFrame(animId);
+      overlay.classList.remove('active');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      active = false;
+    }, 3200);
+  });
+})();
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 4 — SUDO HIRE-ME MODAL
+══════════════════════════════════════════════════════ */
+function closeSudo() {
+  document.getElementById('sudo-modal').classList.remove('active');
+}
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeSudo();
+});
+
+const sudoBuffer = { str: '', timer: null };
+document.addEventListener('keydown', e => {
+  const el = document.activeElement;
+  if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA')) return;
+  sudoBuffer.str += e.key;
+  clearTimeout(sudoBuffer.timer);
+  sudoBuffer.timer = setTimeout(() => { sudoBuffer.str = ''; }, 1200);
+  if (sudoBuffer.str.toLowerCase().includes('sudo hire-me')) {
+    sudoBuffer.str = '';
+    document.getElementById('sudo-modal').classList.add('active');
+  }
+});
+
+/* ══════════════════════════════════════════════════════
+   FEATURE 5 — INTERACTIVE TERMINAL
+══════════════════════════════════════════════════════ */
+const COMMANDS = {
+  help: () => `<span class="io-teal">Available commands:</span>
+<span class="io-res">  about      —  who is Washma</span>
+<span class="io-res">  skills     —  technical stack</span>
+<span class="io-res">  projects   —  things I've built</span>
+<span class="io-res">  experience —  where I've worked</span>
+<span class="io-res">  education  —  academic background</span>
+<span class="io-res">  contact    —  get in touch</span>
+<span class="io-res">  status     —  availability</span>
+<span class="io-res">  clear      —  clear terminal</span>
+<span class="io-pink">  sudo hire-me  — 👀</span>`,
+
+  about: () => `<span class="io-pink">Washma Ali</span> — Security-focused full-stack engineer &amp; robotics researcher.
+<span class="io-res">  BSc Computer Science (Information Security)</span>
+<span class="io-res">  Royal Holloway, University of London. Graduating June 2026.</span>
+<span class="io-res">  Based in London, UK. Passionate about secure systems,</span>
+<span class="io-res">  computer vision, and building meaningful digital experiences.</span>`,
+
+  skills: () => `<span class="io-teal">Languages  :</span> Python · JavaScript · C/C++ · Java · SQL · R
+<span class="io-purple">Frameworks :</span> React · Node.js · Flask · FastAPI · pandas · OpenCV · MediaPipe
+<span class="io-teal">Cloud      :</span> AWS (EC2, S3) · Docker · Git/GitHub · Linux/Unix
+<span class="io-pink">Security   :</span> JWT · RBAC · Network Security · WebSockets · RESTful APIs
+<span class="io-res">Databases  :</span> PostgreSQL · SQLite · MySQL · SQLAlchemy
+<span class="io-res">Hardware   :</span> IMU Sensors · Bluetooth · Sensor Fusion · Robotics Control`,
+
+  projects: () => `<span class="io-teal">[01] TradeLink</span>  <span class="io-res">Sep 2025 – Present</span>
+<span class="io-res">     Secure full-stack trading platform. Flask + React + JWT + RBAC.</span>
+<span class="io-res">     WebSocket market data. Dockerised. Deployed on AWS.</span>
+
+<span class="io-purple">[02] Stock Market Analysis App</span>  <span class="io-res">Nov 2024 – Jan 2025</span>
+<span class="io-res">     Flask platform with real-time data visualisation.</span>
+<span class="io-res">     SQLAlchemy ORM, modular architecture.</span>
+
+<span class="io-pink">[03] Gesture-Controlled Robotic Arm</span>  <span class="io-res">Sep 2024 – Present</span>
+<span class="io-res">     Computer vision + IMU sensors for camera-free gesture recognition.</span>
+<span class="io-res">     MediaPipe · OpenCV · Python sensor fusion pipeline.</span>`,
+
+  experience: () => `<span class="io-teal">Research Assistant</span>  <span class="io-res">Sep 2024 – Present</span>
+<span class="io-res">  Royal Holloway, University of London</span>
+<span class="io-res">  Robotics · computer vision · sensor fusion · Python pipelines</span>
+
+<span class="io-purple">IT Support Specialist</span>  <span class="io-res">Sep 2022 – Mar 2023</span>
+<span class="io-res">  Oasis International School, Ankara</span>
+<span class="io-res">  500+ users · network infra · hardware diagnostics</span>`,
+
+  education: () => `<span class="io-teal">BSc Computer Science (Information Security)</span>
+<span class="io-res">  Royal Holloway, University of London</span>
+<span class="io-res">  Sep 2023 – June 2026 · Egham, Surrey</span>
+<span class="io-res">  Modules: Network Security · Computational Finance ·</span>
+<span class="io-res">           Algorithms · OS · Software Engineering · Databases</span>`,
+
+  contact: () => `<span class="io-teal">Email   :</span> <span class="io-pink">wmis045@live.rhul.ac.uk</span>
+<span class="io-teal">LinkedIn:</span> linkedin.com/in/washmaali
+<span class="io-teal">GitHub  :</span> github.com/Wshmaalii
+<span class="io-res">Location:</span> London, UK`,
+
+  status: () => `<span class="io-teal">{</span>
+<span class="io-res">  "available"  :</span> <span class="io-pink">true</span>,
+<span class="io-res">  "location"   :</span> <span class="io-pink">"London, UK"</span>,
+<span class="io-res">  "graduating" :</span> <span class="io-pink">"June 2026"</span>,
+<span class="io-res">  "open_to"    :</span> <span class="io-pink">["internships", "placements", "grad roles", "research"]</span>
+<span class="io-teal">}</span>`,
+
+  'sudo hire-me': () => {
+    setTimeout(() => document.getElementById('sudo-modal').classList.add('active'), 300);
+    return `<span class="io-teal">[sudo] password for visitor:</span> ••••••••
+<span class="io-teal">✓ Permission granted.</span> <span class="io-pink">Opening secure channel...</span>`;
+  },
+
+  clear: () => '__clear__',
+};
+
+const itermOutput   = document.getElementById('itermOutput');
+const itermInput    = document.getElementById('iterm-input');
+const cmdHistory    = [];
+let   historyIndex  = -1;
+
+function itermRun(raw) {
+  const cmd = raw.trim().toLowerCase();
+  if (!cmd) return;
+  cmdHistory.unshift(raw.trim());
+  historyIndex = -1;
+
+  const echo = document.createElement('div');
+  echo.innerHTML = `<span class="io-prompt">visitor@washma:~$</span> <span class="io-cmd">${raw.trim()}</span>`;
+  itermOutput.appendChild(echo);
+
+  let response = null;
+  for (const key of Object.keys(COMMANDS)) {
+    if (cmd === key) { response = COMMANDS[key](); break; }
+  }
+
+  if (response === '__clear__') { itermOutput.innerHTML = ''; return; }
+
+  const out = document.createElement('div');
+  out.innerHTML = response
+    ? response
+    : `<span class="io-err">command not found: ${raw.trim()}</span> <span class="io-res">— try <span class="io-pink">help</span></span>`;
+  itermOutput.appendChild(out);
+  itermOutput.scrollTop = itermOutput.scrollHeight;
+}
+
+itermInput.addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    itermRun(itermInput.value);
+    itermInput.value = '';
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    if (historyIndex < cmdHistory.length - 1) {
+      historyIndex++;
+      itermInput.value = cmdHistory[historyIndex];
+    }
+  } else if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    if (historyIndex > 0) { historyIndex--; itermInput.value = cmdHistory[historyIndex]; }
+    else { historyIndex = -1; itermInput.value = ''; }
+  }
+});
 </script>
 
 </body>
