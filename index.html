@@ -226,16 +226,26 @@
       letter-spacing: 0.08em;
       color: var(--muted);
       transition: color 0.2s;
+      position: relative;
     }
-    .nav-links a:hover { color: var(--teal); }
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 1.5px;
+      background: var(--pink);
+      transition: width 0.22s ease;
+    }
+    .nav-links a:hover { color: var(--pink); }
+    .nav-links a:hover::after { width: 100%; }
 
     .btn-hire {
       font-family: 'DM Sans', sans-serif;
       font-size: 0.82rem;
       font-weight: 500;
       padding: 0.45rem 1.2rem;
-      border: 1.5px solid var(--teal);
-      color: var(--teal);
+      border: 1.5px solid var(--pink);
+      color: var(--pink);
       background: transparent;
       border-radius: 6px;
       cursor: pointer;
@@ -243,7 +253,7 @@
       transition: background 0.2s, color 0.2s;
       white-space: nowrap;
     }
-    .btn-hire:hover { background: var(--teal); color: var(--bg); }
+    .btn-hire:hover { background: var(--pink); color: #fff; }
 
     /* ─────────────────────────────────
        SHARED SECTION ANATOMY
@@ -278,7 +288,50 @@
       line-height: 1.15;
       margin-bottom: 3rem;
     }
-    .section-title .highlight { color: var(--teal); }
+    .section-title .highlight      { color: var(--teal); }
+    .section-title .highlight-pink { color: var(--pink); }
+
+    /* Pink section label variant */
+    .section-label-pink { color: var(--pink); }
+    .section-label-pink::after { background: var(--pink); }
+
+    /* Pink pill variant */
+    .pill-pink {
+      border-color: rgba(240,98,146,0.3);
+      color: var(--pink);
+      background: rgba(240,98,146,0.06);
+    }
+
+    /* Pink primary button (Email Me) */
+    .btn-primary.btn-pink { background: var(--pink); color: #fff; }
+    .btn-primary.btn-pink:hover { background: #e05580; }
+
+    /* Pink timeline dot */
+    .timeline-dot-pink {
+      background: var(--pink);
+      box-shadow: 0 0 12px rgba(240,98,146,0.55), 0 0 24px rgba(240,98,146,0.2);
+    }
+
+    /* Pink education icon */
+    .edu-icon-pink {
+      background: rgba(240,98,146,0.07);
+      border-color: rgba(240,98,146,0.2);
+    }
+
+    /* Hero decorative sparkle */
+    .hero-sparkle {
+      font-size: 1.1rem;
+      color: var(--pink);
+      display: inline-block;
+      animation: sparkle-spin 6s linear infinite;
+      margin-left: 0.5rem;
+      opacity: 0.75;
+    }
+    @keyframes sparkle-spin {
+      0%   { transform: rotate(0deg) scale(1); }
+      50%  { transform: rotate(180deg) scale(1.15); }
+      100% { transform: rotate(360deg) scale(1); }
+    }
 
     .section-divider {
       height: 1px;
@@ -403,14 +456,15 @@
       display: inline-flex;
       align-items: center;
       gap: 0.5rem;
-      background: rgba(74,240,196,0.07);
-      border: 1px solid rgba(74,240,196,0.2);
-      color: var(--teal);
+      background: rgba(240,98,146,0.07);
+      border: 1px solid rgba(240,98,146,0.25);
+      color: var(--pink);
       font-size: 0.8rem;
       font-weight: 500;
       padding: 0.4rem 1rem;
       border-radius: 100px;
       width: fit-content;
+      box-shadow: 0 0 20px rgba(240,98,146,0.1);
     }
     .pulse-dot {
       width: 8px; height: 8px;
@@ -563,7 +617,7 @@
       position: absolute;
       left: 0; top: 8px; bottom: 0;
       width: 2px;
-      background: linear-gradient(180deg, var(--teal) 0%, var(--purple) 60%, transparent 100%);
+      background: linear-gradient(180deg, var(--teal) 0%, var(--pink) 45%, var(--purple) 80%, transparent 100%);
     }
 
     .timeline-item { position: relative; margin-bottom: 3rem; }
@@ -759,7 +813,7 @@
     .edu-degree { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--text); margin-bottom: 0.25rem; }
     .edu-school { font-size: 0.9rem; color: var(--muted); margin-bottom: 0.15rem; }
     .edu-meta   { font-size: 0.8rem; color: var(--muted); margin-bottom: 1rem; }
-    .edu-courses-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--teal); font-weight: 500; margin-bottom: 0.5rem; }
+    .edu-courses-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--pink); font-weight: 500; margin-bottom: 0.5rem; }
     .edu-courses { display: flex; flex-wrap: wrap; gap: 0.4rem; }
     .course-tag { font-size: 0.75rem; padding: 0.25rem 0.65rem; border-radius: 5px; background: rgba(255,255,255,0.03); border: 1px solid var(--border); color: var(--muted); }
 
@@ -879,7 +933,7 @@
     </div>
 
     <h1 class="hero-name">
-      Washma<br>
+      Washma<span class="hero-sparkle" aria-hidden="true">✦</span><br>
       <span class="name-pink" data-text="Ali.">Ali.</span>
     </h1>
 
@@ -888,11 +942,11 @@
     </p>
 
     <div class="hero-pills">
-      <span class="pill">InfoSec</span>
+      <span class="pill pill-pink">InfoSec</span>
       <span class="pill">Full-Stack</span>
       <span class="pill">Computer Vision</span>
       <span class="pill">Cloud &amp; DevOps</span>
-      <span class="pill">BSc @ Royal Holloway</span>
+      <span class="pill pill-pink">BSc @ Royal Holloway</span>
     </div>
 
     <div class="hero-buttons">
@@ -945,7 +999,7 @@
     </div>
 
     <div class="timeline-item fade-up" style="transition-delay:0.1s">
-      <div class="timeline-dot"></div>
+      <div class="timeline-dot timeline-dot-pink"></div>
       <div class="timeline-header">
         <div class="timeline-role">IT Support Specialist</div>
         <span class="timeline-date">Sep 2022 – Mar 2023</span>
@@ -1036,7 +1090,7 @@
 ════════════════════════════════════ -->
 <section id="skills">
   <div class="section-label fade-up">Technical Skills</div>
-  <h2 class="section-title fade-up">What I <span class="highlight" data-scramble>Know</span></h2>
+  <h2 class="section-title fade-up">What I <span class="highlight-pink" data-scramble>Know</span></h2>
 
   <div class="skills-grid">
     <div class="skill-card fade-up">
@@ -1100,11 +1154,11 @@
      EDUCATION
 ════════════════════════════════════ -->
 <section id="education">
-  <div class="section-label fade-up">Education</div>
-  <h2 class="section-title fade-up">Where I <span class="highlight" data-scramble>Study</span></h2>
+  <div class="section-label section-label-pink fade-up">Education</div>
+  <h2 class="section-title fade-up">Where I <span class="highlight-pink" data-scramble>Study</span></h2>
 
   <div class="edu-card fade-up">
-    <div class="edu-icon">🎓</div>
+    <div class="edu-icon edu-icon-pink">🎓</div>
     <div>
       <div class="edu-degree">BSc Computer Science (Information Security)</div>
       <div class="edu-school">Royal Holloway, University of London</div>
@@ -1128,15 +1182,15 @@
      CONTACT
 ════════════════════════════════════ -->
 <section id="contact">
-  <div class="section-label fade-up">Contact</div>
-  <h2 class="section-title fade-up">Get In <span class="highlight" data-scramble>Touch</span></h2>
+  <div class="section-label section-label-pink fade-up">Contact</div>
+  <h2 class="section-title fade-up">Get In <span class="highlight-pink" data-scramble>Touch</span></h2>
 
   <div class="contact-grid">
     <div class="fade-up">
       <p class="contact-intro">
         I'm actively looking for opportunities in security engineering, full-stack development, and research roles. Whether it's a placement year, graduate role, or a collaboration — I'd love to hear from you.
       </p>
-      <a href="mailto:wmis045@live.rhul.ac.uk" class="btn-primary">Email Me →</a>
+      <a href="mailto:wmis045@live.rhul.ac.uk" class="btn-primary btn-pink">Email Me →</a>
     </div>
 
     <div class="contact-links fade-up" style="transition-delay:0.1s">
@@ -1162,7 +1216,7 @@
 
 <footer>
   <p>© 2024 Washma Ali. All rights reserved.</p>
-  <span class="footer-right">Built with intention.</span>
+  <span class="footer-right">Built with intention. <span style="color:var(--pink)">✦</span></span>
 </footer>
 
 <script>
